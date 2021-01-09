@@ -5,7 +5,7 @@ class Value:
         self.children = children
         self.op = op
 
-        self.prev = set(children)
+        self._prev = set(children)
         self._backward = lambda: None
         self.grad = 0
 
