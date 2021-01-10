@@ -1,3 +1,5 @@
+from math import exp
+
 class Value:
 
     def __init__(self, data, children=(), op=''):
@@ -51,6 +53,19 @@ class Value:
 
         def _backward():
             self.grad += (out.data > 0) * out.grad
+
+        out._backward = _backward
+
+        return out
+
+    def sigmoid(self):
+        def _sigmoid_fn(x):
+            return 1 / (1 + exp(-x))
+        
+        out = Value(_sigmoid_fn(self.data), (self, ), 'Sigmoid')
+
+        def _backward():
+            self.grad += (1 - _sigmoid_fn(out.data) * _sigmoid_fn(out.data)) * out.grad
 
         out._backward = _backward
 
