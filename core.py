@@ -11,7 +11,7 @@ class Value:
 
 
     def __add__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
+        other = self.assign_other(other) 
         out = Value(self.data + other.data, (self, other), '+') # the output is a Value obj
         # defines the backward function of add
         def _backward():
@@ -23,7 +23,7 @@ class Value:
         return out
 
     def __mul__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
+        other = self.assign_other(other)
         out = Value(self.data * other.data, (self, other), '*')
 
         def _backward():
@@ -95,4 +95,5 @@ class Value:
     def __repr__(self):
         return "Value(data={}, grad={})".format(self.data, self.grad) 
 
- 
+    def assign_other(self, other):
+        return other if isinstance(other, Value) else Value(other)
