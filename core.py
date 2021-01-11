@@ -36,7 +36,7 @@ class Value:
 
         return out
 
-
+    # TODO: What if other is type Value
     def __pow__(self, other):
         assert isinstance(other, (int, float))
         out = Value(self.data**other, (self, ), '**{}'.format(other))  
