@@ -3,15 +3,16 @@ from core import Value
 a = Value(4)
 b = Value(2)
 
-
 f = 3 * a + b**3
-c = f.relu()
+c = f.tanh()
 
-print(c.data)
+print("tanh(20) = {}".format(c.data))
+
+f.backward()
+dfb = b.grad
+print("gradient of f wrt b: {}".format(dfb.data))
 
 d = f.sigmoid()
-
-print(d.data)
 
 f.backward()
 dfb = b.grad

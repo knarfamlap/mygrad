@@ -1,7 +1,7 @@
-from math import exp
+import math
+
 
 class Value:
-
     def __init__(self, data, children=(), op=''):
         self.data = data
         self.children = children
@@ -11,16 +11,17 @@ class Value:
         self._backward = lambda: None
         self.grad = 0
 
-
     def __add__(self, other):
-        other = self.assign_other(other) 
-        out = Value(self.data + other.data, (self, other), '+') # the output is a Value obj
+        other = self.assign_other(other)
+        out = Value(self.data + other.data, (self, other),
+                    '+')  # the output is a Value obj
+
         # defines the backward function of add
         def _backward():
             self.grad += out.grad
             other.grad += out.grad
 
-        out._backward = _backward # assign the function to the attribute
+        out._backward = _backward  # assign the function to the attribute
 
         return out
 
@@ -39,10 +40,10 @@ class Value:
     # TODO: What if other is type Value
     def __pow__(self, other):
         assert isinstance(other, (int, float))
-        out = Value(self.data**other, (self, ), '**{}'.format(other))  
-        
+        out = Value(self.data**other, (self, ), '**{}'.format(other))
+
         def _backward():
-            self.grad += (other * self**(other-1)) * out.grad
+            self.grad += (other * self**(other - 1)) * out.grad
 
         out._backward = _backward
 
@@ -60,16 +61,27 @@ class Value:
 
     def sigmoid(self):
         def _sigmoid_fn(x):
-            return 1 / (1 + exp(-x))
-        
+            return 1 / (1 + math.exp(-x))
+
         def _backward():
-            self.grad += (1 - _sigmoid_fn(out.data) * _sigmoid_fn(out.data)) * out.grad
-            
+            self.grad += (
+                (1 - _sigmoid_fn(out.data)) * _sigmoid_fn(out.data)) * out.grad
+
         out = Value(_sigmoid_fn(self.data), (self, ), 'Sigmoid')
         out._backward = _backward
 
         return out
-    
+
+    def tanh(self):
+        out = Value(math.tanh(self.data), (self, ), "Tanh")
+
+        def _backward():
+            self.grad += ((1 - math.tanh(out.data)**2) * self.grad) * out.grad
+
+        out._backward = _backward
+
+        return out
+
     def backward(self):
         topo = []
         visited = set()
@@ -77,16 +89,17 @@ class Value:
         def build_topo(v):
             if v not in visited:
                 visited.add(v)
-                v.grad = 0 # grad to 0 so calculation is not affected by previous results
+                # grad to 0 so calculation is not affected by previous results
+                v.grad = 0
                 for child in v._prev:
                     build_topo(child)
                 topo.append(v)
+
         build_topo(self)
         # go one var at a time and apply chain rule to get its gradient
         self.grad = Value(1)
         for v in reversed(topo):
             v._backward()
-
 
     def __neg__(self):
         return self * -1
@@ -107,7 +120,7 @@ class Value:
         return other * (self**-1)
 
     def __repr__(self):
-        return "Value(data={}, grad={})".format(self.data, self.grad) 
+        return "Value(data={}, grad={})".format(self.data, self.grad)
 
     def assign_other(self, other):
         return other if isinstance(other, Value) else Value(other)
