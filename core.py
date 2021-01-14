@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 
 class Value:
@@ -63,20 +64,20 @@ class Value:
         def _sigmoid_fn(x):
             return 1 / (1 + math.exp(-x))
 
-        def _backward():
-            self.grad += (
-                (1 - _sigmoid_fn(out.data)) * _sigmoid_fn(out.data)) * out.grad
-
         out = Value(_sigmoid_fn(self.data), (self, ), 'Sigmoid')
+
+        def _backward():
+            self.grad += ((1 - out.data) * out.data) * out.grad
+
         out._backward = _backward
 
         return out
 
     def tanh(self):
-        out = Value(math.tanh(self.data), (self, ), "Tanh")
+        out = Value(np.tanh(self.data), (self, ), "Tanh")
 
         def _backward():
-            self.grad += ((1 - math.tanh(out.data)**2) * self.grad) * out.grad
+            self.grad += (1 - out.data**2) * out.grad
 
         out._backward = _backward
 
