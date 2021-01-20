@@ -1,4 +1,5 @@
 import random
+import numpy as np
 from core import Value
 
 
@@ -73,3 +74,26 @@ class MLP(Module):
 
     def __repr__(self):
         return f"MLP of [{', '.join(str(layer) for layer in self.layers)}]"
+
+
+class RNN(Module):
+
+    def __init__(self, input_size, hidden_size, output_size):
+        self.hidden_size = hidden_size
+        self.i2h = Linear(input_size + hidden_size, hidden_size)
+        self.i2o = Linear(input_size + hidden_size, output_size)
+
+    def __call__(self, x, hidden):
+        combined = np.concatenate((X, hidden), axis=1)
+        hidden = self.i2h(combined)
+        out = self.i2o(combined)
+        return out, hidden
+
+    def layers(self):
+        return [self.i2h, i2o]
+
+    def parameters(self):
+        return [p for layer in self.layers() for p in layer.parameters()]
+
+    def __repr__(self):
+        return f"RNN of [{', '.join(str(layer) for layer in self.layers())}]"
