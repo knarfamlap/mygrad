@@ -1,2 +1,5 @@
 numpy 
 torch
+jupyter
+matplotlib
+sklearn

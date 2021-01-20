@@ -51,7 +51,8 @@ class Value:
         return out
 
     def relu(self):
-        out = Value(0 if self.data < 0 else self.data, (self, ), 'ReLU')
+        print(type(self.data))
+        out = Value(0 if self.data < 0 else self.data , (self, ), 'ReLU')
 
         def _backward():
             self.grad += (out.data > 0) * out.grad
@@ -108,8 +109,11 @@ class Value:
     def __radd__(self, other):
         return self + other
 
-    def __rsub__(self, other):
-        return self - other
+    def __sub__(self): # self - other
+        return self + (-other) 
+
+    def __rsub__(self, other): # other - self
+        return other + (-self) 
 
     def __rmul__(self, other):
         return self * other

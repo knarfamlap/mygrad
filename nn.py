@@ -17,17 +17,17 @@ class Module:
 
 
 class Neuron(Module):
-    def __init(self, nin, nonlin=True):
+    def __init__(self, nin, nonlin=True):
         """
         Initialize parameters for linear layer
         """
-        self.w = [Value(random.uniform(-1, 1) for _ in range(nin))]
+        self.w = [Value(random.uniform(-1, 1)) for _ in range(nin)]
         self.b = Value(0)
         self.nonlin = nonlin
 
     def __call__(self, x):
         # take the dot product of w and x and add the bias: wx + b
-        act = sum(wi * xi for wi, xi in zip(self.w, x), self.b)
+        act = sum((wi * xi for wi, xi in zip(self.w, x)), self.b)
         # apply non linearity if indicated
         return act.relu() if self.nonlin else act
 
@@ -38,12 +38,12 @@ class Neuron(Module):
         return self.w + [self.b]
 
     def __repr__(self):
-        return f"{'ReLU' if self.nonlin else "Linear"}Neuron({len(self.w)})"
+        return f"{'ReLU' if self.nonlin else 'Linear'}Neuron({len(self.w)})"
 
 
 class Layer(Module):
     def __init__(self, nin, nout, **kwargs):
-        return self.neurons = [Neuron(nin, **kwargs) for _ in range(nin)]
+        self.neurons = [Neuron(nin, **kwargs) for _ in range(nout)]
 
     def __call__(self, x):
         out = [n(x) for n in self.neurons]
@@ -53,7 +53,7 @@ class Layer(Module):
         return [p for n in self.neurons for p in n.parameters()]
 
     def __repr__(self):
-        return return f"Layer of [{', '.join(str(n) for n in self.neurons)}]"
+        return f"Layer of [{', '.join(str(n) for n in self.neurons)}]"
 
 
 class MLP(Module):
@@ -80,8 +80,8 @@ class RNN(Module):
 
     def __init__(self, input_size, hidden_size, output_size):
         self.hidden_size = hidden_size
-        self.i2h = Linear(input_size + hidden_size, hidden_size)
-        self.i2o = Linear(input_size + hidden_size, output_size)
+        self.i2h = Layer(input_size + hidden_size, hidden_size)
+        self.i2o = Layer(input_size + hidden_size, output_size)
 
     def __call__(self, x, hidden):
         combined = np.concatenate((X, hidden), axis=1)
@@ -91,6 +91,9 @@ class RNN(Module):
 
     def layers(self):
         return [self.i2h, i2o]
+
+    def initHidden(self):
+        return [[0 for _ in range(self.hidden_size)]]
 
     def parameters(self):
         return [p for layer in self.layers() for p in layer.parameters()]
