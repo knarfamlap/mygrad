@@ -17,7 +17,7 @@ class Module:
 
 
 class Neuron(Module):
-    def __init__(self, nin, nonlin=True):
+    def __init__(self, nin, nonlin=False):
         """
         Initialize parameters for linear layer
         """
@@ -78,19 +78,20 @@ class MLP(Module):
 
 class RNN(Module):
 
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self, input_size, output_size, hidden_size):
         self.hidden_size = hidden_size
         self.i2h = Layer(input_size + hidden_size, hidden_size)
         self.i2o = Layer(input_size + hidden_size, output_size)
 
     def __call__(self, x, hidden):
-        combined = np.concatenate((X, hidden), axis=1)
+        # concatenates row vectors together
+        combined = [x[0] + hidden[0]]
         hidden = self.i2h(combined)
         out = self.i2o(combined)
         return out, hidden
 
     def layers(self):
-        return [self.i2h, i2o]
+        return [self.i2h, self.i2o]
 
     def initHidden(self):
         return [[0 for _ in range(self.hidden_size)]]
@@ -100,3 +101,15 @@ class RNN(Module):
 
     def __repr__(self):
         return f"RNN of [{', '.join(str(layer) for layer in self.layers())}]"
+
+
+class Sigmoid(Module):
+    def __init__(dim=None):
+        self.dim = dim
+
+    def __call__(self, x):
+        return [neuron.sigmoid() for neuron in x]
+
+    def __repr__(self):
+        return f"Sigmoid of [{self.dim}]"
+    
