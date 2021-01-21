@@ -104,7 +104,7 @@ class RNN(Module):
 
 
 class Sigmoid(Module):
-    def __init__(dim=None):
+    def __init__(self, dim=None):
         self.dim = dim
 
     def __call__(self, x):
