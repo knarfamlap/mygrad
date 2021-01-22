@@ -104,12 +104,21 @@ class RNN(Module):
 
 
 class Sigmoid(Module):
-    def __init__(self, dim=None):
-        self.dim = dim
 
     def __call__(self, x):
+        self.dim = len(x)
         return [neuron.sigmoid() for neuron in x]
 
     def __repr__(self):
         return f"Sigmoid of [{self.dim}]"
+
+class ReLU(Module):
+    
+    def __call__(self, x):
+        self.dim = len(x)
+        return [neuron.relu() for neuron in x]
+
+    def __repr__(self):
+        return f"ReLU of [{self.dim}]"
+    
     

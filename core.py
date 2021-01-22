@@ -51,8 +51,8 @@ class Value:
         return out
 
     def exp(self):
-        assert self.op == '+'
-        
+        assert self.op == '+' or self.op == ''
+
         out = Value(np.exp(self.data), (self, ), 'exp({})'.format(self.data))
 
         def _backward():

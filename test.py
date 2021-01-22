@@ -6,14 +6,14 @@ def test_exp():
     a = Value(4.0)
     b = Value(2.0)
 
-    x = a + b
+    x = a 
 
-    x = x.exp() # e^{a + b}
+    x = x.exp()
 
 
     x.backward()
     print(a.grad)
-    assert a.grad == np.exp(6) 
+    assert a.grad == np.exp(4.0) 
 
 # print("Testing Relu")
 # test_relu()
