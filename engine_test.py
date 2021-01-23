@@ -1,4 +1,4 @@
-from engine import Variable
+from mygrad.engine import Variable
 
 a = Variable(4.0)
 b = Variable(2.0)
