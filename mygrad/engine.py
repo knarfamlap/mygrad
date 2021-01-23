@@ -52,7 +52,7 @@ class Variable:
         assert isinstance(val, (int, float))
         value = self.value ** val
         local_gradients = (
-            (self, val * self.value ** (val - 1)),
+            (self, val * (self.value ** (val - 1))),
         )
 
         return Variable(value, local_gradients)

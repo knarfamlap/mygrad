@@ -3,3 +3,4 @@ torch
 jupyter
 matplotlib
 sklearn
+pytest
