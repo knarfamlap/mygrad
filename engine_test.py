@@ -13,9 +13,9 @@ def test_ops():
     g = c / a
     f = -g 
 
-    grads = f.backward()
+    f.backward()
     
-    amg, bmg, fval = grads[a], grads[b], f.value
+    amg, bmg, fval = a.grad, b.grad,  f.value
 
     a = torch.Tensor([2.0]).double()
     b = torch.Tensor([3.0]).double()
@@ -48,8 +48,8 @@ def test_sigmoid():
     # d = c ** 2
     e = F.sigmoid(c)
 
-    grads = e.backward()
-    amg, bmg, emg_val = grads[a], grads[b], e.value
+    e.backward()
+    amg, bmg, emg_val = a.grad, a.grad, e.value
 
     a = torch.Tensor([5.0]).double()
     b = torch.Tensor([3.0]).double()
@@ -79,8 +79,8 @@ def test_relu():
     d = c ** 2
     e = F.relu(d)
 
-    grads = e.backward()
-    amg, bmg, emg_val = grads[a], grads[b], e.value
+    e.backward()
+    amg, bmg, emg_val = a.grad, b.grad, e.value
 
     a = torch.Tensor([5.0]).double()
     b = torch.Tensor([3.0]).double()
@@ -111,8 +111,8 @@ def test_tanh():
     d = c ** 2
     e = F.tanh(d)
 
-    grads = e.backward()
-    amg, bmg, emg_val = grads[a], grads[b], e.value
+    e.backward()
+    amg, bmg, emg_val = a.grad, b.grad, e.value
 
     a = torch.Tensor([5.0]).double()
     b = torch.Tensor([3.0]).double()
@@ -132,4 +132,3 @@ def test_tanh():
     assert abs(amg - apt.grad.item()) < tol
     assert abs(bmg - bpt.grad.item()) < tol
     assert abs(emg_val - ept_val.data.item()) < tol
-

@@ -5,6 +5,7 @@ class Variable:
     def __init__(self, value, local_gradients=()):
         self.value = value
         self.local_gradients = local_gradients
+        self.grad = 0
 
     def __add__(self, other):
         other = Variable(other) if isinstance(other, (int, float)) else other
@@ -67,6 +68,7 @@ class Variable:
             for child_variable, local_gradient in variable.local_gradients:
                 value_of_path_to_child = path_value * local_gradient
                 grads[child_variable] += value_of_path_to_child
+                child_variable.grad = grads[child_variable]
                 compute_grads(child_variable, value_of_path_to_child)
 
         compute_grads(self, path_value=1)
