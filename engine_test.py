@@ -63,7 +63,6 @@ def test_sigmoid():
 
     e.backward()
     apt, bpt, ept_val =  a, b, e
-
     tol = 1e-6
 
     assert abs(amg - apt.grad.item()) < tol
@@ -132,3 +131,5 @@ def test_tanh():
     assert abs(amg - apt.grad.item()) < tol
     assert abs(bmg - bpt.grad.item()) < tol
     assert abs(emg_val - ept_val.data.item()) < tol
+
+

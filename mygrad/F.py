@@ -18,7 +18,7 @@ def exp(x):
 def relu(x):
     value = 0 if x.value < 0 else x.value
     local_gradients = (
-        (x, (value > 0) * 1),
+        (x,  (value > 0) * 1),
     )
 
     return Variable(value, local_gradients)
@@ -27,7 +27,7 @@ def relu(x):
 def tanh(x):
     value = np.tanh(x.value)
     local_gradients = (
-        (x, 1. - value**2),
+        (x,  1. - value**2),
     )
 
     return Variable(value, local_gradients)
