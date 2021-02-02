@@ -31,3 +31,11 @@ def tanh(x):
     )
 
     return Variable(value, local_gradients)
+
+def log(x):
+    value = np.log(x.value)
+    local_gradients = (
+        (x, 1. / x.value),
+    )
+
+    return Variable(value, local_gradients)

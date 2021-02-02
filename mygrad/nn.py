@@ -1,4 +1,5 @@
 import random
+import numpy as np
 import mygrad.F as F
 from mygrad.engine import Variable
 
@@ -67,3 +68,59 @@ class MLP(Module):
 
     def __repr__(self):
         return f"MLP of [{', '.join(str(layer) for layer in self.layers)}]"
+
+
+class RNN(Module):
+
+    def __init__(self, input_sz, hidden_sz, output_sz):
+        self.hidden_sz = hidden_sz
+        self.input_sz = input_sz
+        self.output_sz = output_sz
+        self.i2h = Linear(input_sz + hidden_sz, hidden_sz)
+        self.i2o = Linear(input_sz + hidden_sz, output_sz)
+        self.softmax = LogSoftmax()
+
+        self.layers = [self.i2h, self.i2o, self.softmax]
+
+    def __call__(self, x, hidden):
+        # concatenate the input and hidden column wise
+        comb = np.concatenate((x, hidden), axis=1)
+        hidden = self.i2h(comb)
+        output = self.i2o(comb)
+        output = self.softmax(output)
+
+        return output, hidden
+
+    def parameters(self):
+        return [p for layer in self.layers for p in layer.parameters()]
+
+    def initHidden(self):
+        return np.zeros((1, self.hidden_sz))
+
+    def __repr__(self):
+        return "RNN of [ input_sz={}, hidden_sz={}, output_sz={}]".format(self.input_sz, self.hidden_sz, self.output_sz)
+
+
+class Sigmoid(Module):
+
+    def __call__(self, x):
+        return [F.sigmoid(x) for elem in x]
+
+
+class ReLU(Module):
+
+    def __call__(self, x):
+        return [F.relu(x) for elem in x]
+
+
+class Tanh(Module):
+
+    def __call__(self, x):
+        return [F.tanh(x) for elem in x]
+
+
+class LogSoftmax(Module):
+
+    def __call__(self, x):
+        exp_sum = sum(F.exp(xi) for xi in x)
+        return [F.log(F.exp(xi) / exp_sum) for xi in x]
