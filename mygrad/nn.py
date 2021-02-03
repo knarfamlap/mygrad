@@ -2,6 +2,8 @@ import random
 import numpy as np
 import mygrad.F as F
 from mygrad.engine import Variable
+from mygrad.utils import to_var
+from mygrad.utils import to_val
 
 
 class Module:
@@ -84,7 +86,7 @@ class RNN(Module):
 
     def __call__(self, x, hidden):
         # concatenate the input and hidden column wise
-        comb = np.concatenate((x, hidden), axis=1)
+        comb = np.concatenate((x, hidden), axis=1).flatten()
         hidden = self.i2h(comb)
         output = self.i2o(comb)
         output = self.softmax(output)
@@ -99,6 +101,31 @@ class RNN(Module):
 
     def __repr__(self):
         return "RNN of [ input_sz={}, hidden_sz={}, output_sz={}]".format(self.input_sz, self.hidden_sz, self.output_sz)
+
+
+class LSTM(Module):
+    def __init__(self, input_sz, hidden_sz):
+        self.input_sz = input_sz
+        self.hidden_sz = hidden_sz
+
+        self.W = to_var(np.random.random((input_sz, hidden_sz * 4)))
+        self.U = to_var(np.random.random((hidden_sz, hidden_sz * 4)))
+        self.b = to_var(np.random.random(hidden_sz * 4))
+
+
+    def __call__(self, x, init_states=None):
+        """
+        x: shape of (batch_sz, sequence, feature)
+        """ 
+
+        # batch_sz, seq_sz, _ = x.size
+        # hidden_seq = [] 
+
+        pass
+
+
+        
+
 
 
 class Sigmoid(Module):
